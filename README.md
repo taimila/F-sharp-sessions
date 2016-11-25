@@ -1,2 +1,2 @@
 # F# Sessions
-This repository contains code we write during our F# interest group meetings. Code is meant to teach F# featues and syntax. Do not use this as guideline for your important big project. :)
+This repository contains code we write during our F# interest group meetings. Code is meant to teach F# featues and syntax.
