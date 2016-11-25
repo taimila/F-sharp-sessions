@@ -1,8 +1,23 @@
-﻿module Tests
+﻿namespace WebShop
 
-open FsUnit
-open NUnit.Framework
+module Tests =
+  open FsUnit
+  open NUnit.Framework
+  open ShoppingCart
 
-[<Test>]
-let placeholderTest () =
-  1 |> should equal 1
+  let laptop = (Item.create "Laptop" 1200m).Value
+
+  [<Test>]
+  let ``Adding an item to cart increases count by one`` () =
+    ShoppingCart.empty
+    |> addItem laptop
+    |> getNumberOfItems
+    |> should equal 1
+
+  [<Test>]
+  let ``Removing an item from one item list makes cart empty`` () =
+    ShoppingCart.empty
+    |> addItem laptop
+    |> removeItem laptop
+    |> getNumberOfItems
+    |> should equal 0
