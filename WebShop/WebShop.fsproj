@@ -49,6 +49,12 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Domain.fs" />
+    <Compile Include="Helpers.fs" />
+    <Compile Include="Payment.fs" />
+    <Compile Include="Item.fs" />
+    <Compile Include="ShoppingCart.fs" />
+    <Compile Include="DataAccess.fs" />
+    <Compile Include="UseCases.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
   </ItemGroup>
