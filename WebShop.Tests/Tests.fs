@@ -9,27 +9,51 @@ module Tests =
 
   let payment = (Payment.createCashPayment 1200m).Value
 
+  let shouldBeSuccess result =
+    match result with
+    | Success s -> s
+    | Failure errors -> failwithf "Errors: %A" errors
+
+  let shouldBeFailure result =
+     match result with
+    | Success s -> failwith "Expected failure, but was success"
+    | Failure errors -> errors
+
+  let andErrorMessageIs error errors =
+    if errors |> List.contains error 
+    then () 
+    else failwithf "Expected error %A, but had %A" error errors
+
+
+  let isPaid cart =
+    match cart with
+    | Paid _ -> true
+    | _ -> false
+
   [<Test>]
   let ``Adding an item to cart increases count by one`` () =
     ShoppingCart.empty
     |> addItem laptop
-    |> getNumberOfItems
+    |> map getNumberOfItems
+    |> shouldBeSuccess
     |> should equal 1
 
   [<Test>]
   let ``Removing an item from one item list makes cart empty`` () =
     ShoppingCart.empty
     |> addItem laptop
-    |> removeItem laptop
-    |> getNumberOfItems
+    |> bind (removeItem laptop)
+    |> map getNumberOfItems
+    |> shouldBeSuccess
     |> should equal 0
 
   [<Test>]
   let ``Get total returns total amount of the cart`` () =
     ShoppingCart.empty
     |> addItem laptop
-    |> addItem laptop
-    |> getTotal
+    |> bind(addItem laptop)
+    |> map getTotal
+    |> shouldBeSuccess
     |> should equal (Money 2400m)
 
   [<Test>]
@@ -38,15 +62,20 @@ module Tests =
     |> getTotal
     |> should equal (Money 0m)
 
-  let isPaid cart =
-    match cart with
-    | Paid (items, payment) -> true
-    | _ -> false
-
   [<Test>]
   let ``Cart is paid after I paid it`` () =
     ShoppingCart.empty
     |> addItem laptop
-    |> payWith payment
-    |> isPaid
+    |> bind (payWith payment)
+    |> map isPaid
+    |> shouldBeSuccess
     |> should be True
+
+  [<Test>]
+  let ``Adding an item to paid cart will fail`` () =
+    ShoppingCart.empty
+    |> addItem laptop
+    |> bind (payWith payment)
+    |> bind (addItem laptop)
+    |> shouldBeFailure
+    |> andErrorMessageIs CantAddItemToPaidCart

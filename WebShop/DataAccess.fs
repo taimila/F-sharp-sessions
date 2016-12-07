@@ -10,8 +10,10 @@ module DataAccess =
     Guid.NewGuid ()
 
   let getCart cartId =
-    storage.[cartId]
+    if storage.ContainsKey(cartId)
+    then storage.[cartId] |> ok
+    else CartNotFound cartId |> fail 
 
   let saveCart cartId cart =
     storage.[cartId] <- cart
-    cart
+    cart |> ok

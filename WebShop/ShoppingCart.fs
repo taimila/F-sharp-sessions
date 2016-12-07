@@ -6,19 +6,19 @@ module ShoppingCart =
 
   let addItem item cart =
     match cart with
-    | Empty -> Active [item]
-    | Active items -> Active (item :: items)
-    | Paid _ -> failwith "Bug!"
+    | Empty -> Active [item] |> ok
+    | Active items -> Active (item :: items) |> ok
+    | Paid _ -> fail CantAddItemToPaidCart
 
   let removeItem item cart = 
     match cart with
-    | Empty -> failwith "Bug!"
-    | Paid _ -> failwith "Bug!"
+    | Empty ->  fail CantRemoveItemFromEmptyCart
+    | Paid _ -> fail CantRemoveItemFromPaidCart
     | Active items ->
       let remaining = items |> List.filter (fun i -> i <> item)
       if remaining.Length = 0
-      then Empty
-      else Active remaining
+      then Empty |> ok
+      else Active remaining |> ok
 
   let getNumberOfItems cart = 
     match cart with
@@ -35,11 +35,11 @@ module ShoppingCart =
 
   let payWith payment cart =
     match cart with
-    | Empty -> failwith "Bug!"
-    | Paid _ -> failwith "Bug!"
+    | Empty -> fail CantPayEmptyCart
+    | Paid _ -> fail CantPayAlreadyPaidCart
     | Active items ->
       let cartAmount = getTotal cart
       let paymentAmount = Payment.getAmount payment
       if paymentAmount = cartAmount
-      then Paid (items, payment)
-      else failwith "Bug!"
+      then Paid (items, payment) |> ok
+      else fail PaymentWasNotSameAsCartTotal

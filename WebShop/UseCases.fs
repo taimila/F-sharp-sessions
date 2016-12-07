@@ -11,22 +11,19 @@ module UseCases =
     id
 
   let addItem getCart saveCart cartId item =
-    cartId
-    |> getCart
-    |> addItem item
-    |> saveCart cartId
-
+    getCart cartId
+    >>= addItem item
+    >>= saveCart cartId
+    
   let removeItem getCart saveCart cartId item =
-    cartId
-    |> getCart
-    |> removeItem item
-    |> saveCart cartId
-
+    getCart cartId
+    >>= removeItem item
+    >>= saveCart cartId
+     
   let payCart getCart saveCart cartId payment =
-    cartId
-    |> getCart
-    |> payWith payment
-    |> saveCart cartId
+    getCart cartId
+    >>= payWith payment
+    >>= saveCart cartId
     
   let create () =
     createCart DataAccess.createId DataAccess.saveCart 
