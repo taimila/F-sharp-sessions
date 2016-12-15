@@ -14,7 +14,7 @@ module UseCases =
     getCart cartId
     >>= addItem item
     >>= saveCart cartId
-    
+  
   let removeItem getCart saveCart cartId item =
     getCart cartId
     >>= removeItem item
@@ -25,6 +25,10 @@ module UseCases =
     >>= payWith payment
     >>= saveCart cartId
     
+  let getTotalOf getCart cartId =
+    getCart cartId
+    |> map getTotal
+
   let create () =
     createCart DataAccess.createId DataAccess.saveCart 
 
@@ -36,3 +40,6 @@ module UseCases =
 
   let pay =
     payCart DataAccess.getCart DataAccess.saveCart
+
+  let total =
+    getTotalOf DataAccess.getCart
